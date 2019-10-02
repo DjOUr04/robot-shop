@@ -4,11 +4,6 @@ pipeline {
       label 'sample-app'
       defaultContainer 'jnlp'
       yaml """
-  apiVersion: v1
-  kind: Pod
-  metadata:
-  labels:
-    component: ci
   spec:
     containers:
       - name: kubectl
