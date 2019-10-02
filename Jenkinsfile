@@ -12,10 +12,10 @@ pipeline {
   spec:
     containers:
       - name: kubectl
-      image: gcr.io/cloud-builders/kubectl
-      command:
-      - cat
-      tty: true
+        image: gcr.io/cloud-builders/kubectl
+        command:
+        - cat
+        tty: true
   """
 }
   }
