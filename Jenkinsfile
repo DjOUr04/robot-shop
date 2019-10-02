@@ -1,52 +1,14 @@
-pipeline {
-  agent {
-    kubernetes {
-      label 'sample-app'
-      defaultContainer 'jnlp'
-      yaml """
-  apiVersion: v1
-  kind: Pod
-  metadata:
-  labels:
-  component: ci
-  spec:
-  # Use service account that can deploy to all namespaces
-  serviceAccountName: cd-jenkins
-  containers:
-  - name: golang
-    image: golang:1.10
-    command:
-    - cat
-    tty: true
-  - name: gcloud
-    image: gcr.io/cloud-builders/gcloud
-    command:
-    - cat
-    tty: true
-  - name: kubectl
-    image: gcr.io/cloud-builders/kubectl
-    command:
-    - cat
-    tty: true
-  """
-}
+def label = "worker-${UUID.randomUUID().toString()}"
+
+podTemplate(label: label, containers: [
+  containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.8', command: 'cat', ttyEnabled: true),
+  containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:latest', command: 'cat', ttyEnabled: true)
+]) {
+  node(label) {
+    stage('Run kubectl') {
+      container('kubectl') {
+        sh "kubectl get pods"
+      }
+    }
   }
-
-    environment {
-      AWS_ACCESS_KEY_ID = credentials('aws_access_key')
-      AWS_SECRET_ACCESS_KEY = credentials('aws_secret_key')
-      AWS_PROFILE = "eks"
-      AWS_DEFAULT_PROFILE = "eks"
-      KUBECONFIG = credentials('eks-conf')
-    }
-
-    stages {
-      stage('kubeconfiguration') {
-        steps {
-            container('kubectl') {
-               sh("kubectl get nodes")
-            }
-          }
-        }
-    }
 }
