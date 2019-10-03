@@ -2,8 +2,6 @@ pipeline {
   agent any
 
   environment {
-    AWS_ACCESS_KEY_ID = credentials('aws_access_key')
-    AWS_SECRET_ACCESS_KEY = credentials('aws_secret_key')
     AWS_PROFILE = "eks"
     AWS_DEFAULT_PROFILE = "eks"
     KUBECONFIG = credentials('eks-conf')
